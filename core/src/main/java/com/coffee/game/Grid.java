@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.coffee.Engine;
+import com.coffee.input.TypeSlide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,17 +18,15 @@ public class Grid {
     private final int width, height;
     private final int padding;
     private final Slot[] grid;
-    float startX = 0, startY = 0;
-    boolean touched = false;
-    private boolean moved;
+    private boolean slided;
 
     public Grid(int width, int height) {
         this.width = width;
         this.height = height;
-        this.padding = 2*Game.SCALE();
+        this.padding = 2*Engine.SCALE();
         this.shape = new ShapeRenderer();
         this.color = new Color(0xbdada0ff);
-        this.bounds = new Rectangle(0, 0, width*(Game.SIZE()+padding)+padding, height*(Game.SIZE()+padding)+padding);
+        this.bounds = new Rectangle(0, 0, width*(Engine.SIZE()+padding)+padding, height*(Engine.SIZE()+padding)+padding);
         this.grid = buildGrid();
         spawn();
     }
@@ -36,7 +35,7 @@ public class Grid {
         Slot[] slots = new Slot[width*height];
         for(int y = 0; y < height; y++) {
             for(int x = 0; x < width; x++) {
-                slots[x+y*width] = new Slot(padding + (padding+Game.SIZE())*x, padding + (padding+Game.SIZE())*y, Game.SIZE());
+                slots[x+y*width] = new Slot(padding + (padding+Engine.SIZE())*x, padding + (padding+Engine.SIZE())*y, Engine.SIZE());
             }
         }
         return slots;
@@ -61,9 +60,8 @@ public class Grid {
     }
 
     private boolean allDone() {
-        for(int i = 0 ; i < grid.length; i++) {
-            Slot slot = grid[i];
-            if(!slot.done()) {
+        for (Slot slot : grid) {
+            if (!slot.done()) {
                 return false;
             }
         }
@@ -97,33 +95,13 @@ public class Grid {
                 slot.tick();
         }
         if(allDone()) {
-            if (Engine.getInputs().justTouched() && !touched) {
-                touched = true;
-                startX = Engine.getInputs().getX();
-                startY = Engine.getInputs().getY();
-            } else if (!Engine.getInputs().isTouched() && touched) {
-                float deltaX = Engine.getInputs().getX() - startX;
-                float deltaY = Engine.getInputs().getY() - startY;
-                if(Math.abs(deltaX) <= Game.SIZE()/3f && Math.abs(deltaY) <= Game.SIZE()/3f)
-                    return;
+            TypeSlide slide = Engine.getInputs().getSlide();
+            if (!slide.equals(TypeSlide.Idle)) {
                 Game.getGame().stackGrid();
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    if (deltaX > 0) {
-                        moved = slide(TypeSlide.Right);
-                    } else {
-                        moved = slide(TypeSlide.Left);
-                    }
-                } else {
-                    if (deltaY > 0) {
-                        moved = slide(TypeSlide.Up);
-                    } else {
-                        moved = slide(TypeSlide.Down);
-                    }
-                }
-                touched = false;
+                slided = slide(slide);
             }
-            if(moved) {
-                moved = false;
+            if(slided && allDone()) {
+                slided = false;
                 spawn();
             }
         }
@@ -202,7 +180,8 @@ public class Grid {
 
     public void dispose() {
         for(Slot slot : grid) {
-            slot.content().dispose();
+            if(!slot.isEmpty())
+                slot.content().dispose();
             slot.dispose();
         }
         shape.dispose();

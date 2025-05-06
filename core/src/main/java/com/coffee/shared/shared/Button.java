@@ -1,4 +1,4 @@
-package com.coffee.game.ui.shared;
+package com.coffee.shared.shared;
 
 
 import com.badlogic.gdx.Gdx;
@@ -28,7 +28,7 @@ public class Button {
         this.layout = new GlyphLayout();
         this.font = new BitmapFont(Gdx.files.internal("Rowdies/Rowdies.fnt"));
         this.color = new Color(0xff0000ff);
-        int padding = Game.SCALE()*3;
+        int padding = Engine.SCALE()*3;
         layout.setText(font, value);
         float width = layout.width + padding*2;
         float height = layout.height + padding*2;
@@ -48,14 +48,7 @@ public class Button {
     }
 
     public boolean clicked() {
-        if(Engine.getInputs().justTouched()) {
-            int x = Engine.getInputs().getX();
-            int y = Engine.getInputs().getY();
-            Vector3 touchPos = new Vector3(x, y, 0);
-            Game.getCam().unproject(touchPos);
-            return bounds.contains(touchPos.x, touchPos.y);
-        }
-        return false;
+        return Engine.getInputs().isPressed(this.bounds);
     }
 
     public void render() {

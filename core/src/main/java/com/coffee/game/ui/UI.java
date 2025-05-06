@@ -5,17 +5,23 @@ import com.badlogic.gdx.math.Rectangle;
 import com.coffee.Activity;
 import com.coffee.Engine;
 import com.coffee.game.Game;
-import com.coffee.game.ui.shared.Button;
+import com.coffee.menu.Menu;
+import com.coffee.shared.shared.Button;
 
 public class UI implements Activity {
 
+    private final Button backMenu;
     private final Button restoreButton;
 
     public UI() {
-        float xRB = Engine.getWidth();
-        float yRB = Engine.getHeight();
-        this.restoreButton = new Button("Back", xRB, yRB);
+        float x = Engine.getWidth();
+        float y = Engine.getHeight() - Engine.SIZE();
+        this.restoreButton = new Button("Back", x, y);
         this.restoreButton.setColor(new Color(0xbcaba0ff));
+        this.restoreButton.setPosition(x - this.restoreButton.getBounds().width, y - this.restoreButton.getBounds().height);
+        this.backMenu = new Button("Menu", x, y);
+        this.backMenu.setColor(new Color(0xbcaba0ff));
+        this.backMenu.setPosition(0, y - this.restoreButton.getBounds().height);
     }
 
     @Override
@@ -23,17 +29,23 @@ public class UI implements Activity {
         if(this.restoreButton.clicked()) {
             Game.getGame().restore();
         }
+        if(this.backMenu.clicked()) {
+            Game.getGrid().dispose();
+            Engine.setActivity(new Menu());
+            return;
+        }
         Rectangle bounds = Game.getGrid().getBounds();
-        this.restoreButton.setPosition(bounds.x + bounds.width - restoreButton.getBounds().width, bounds.y + bounds.getHeight() + Game.SIZE()/2f);
     }
 
     @Override
     public void render() {
         restoreButton.render();
+        backMenu.render();
     }
 
     @Override
     public void dispose() {
         restoreButton.dispose();
+        backMenu.dispose();
     }
 }

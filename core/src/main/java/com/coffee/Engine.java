@@ -5,7 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.coffee.game.Game;
+import com.coffee.input.Touch;
+import com.coffee.menu.Menu;
 
 import java.util.Random;
 
@@ -13,8 +16,24 @@ import java.util.Random;
 public class Engine extends ApplicationAdapter {
 
 
+    private static OrthographicCamera camera;
     private static Activity activity;
     public static Random rand;
+    private static int scale;
+
+    private static Touch touch;
+
+    public static int SCALE() {
+        return scale;
+    }
+
+    public static void setSCALE(int scale) {
+        Engine.scale = scale;
+    }
+
+    public static int SIZE() {
+        return 16*scale;
+    }
 
     static {
         rand = new Random();
@@ -22,7 +41,22 @@ public class Engine extends ApplicationAdapter {
 
     @Override
     public void create() {
-        activity = new Game(4, 4);
+        setSCALE(1);
+        this.touch = new Touch();
+        Engine.camera = new OrthographicCamera();
+        Engine.camera.setToOrtho(false, Engine.getWidth(), Engine.getHeight());
+        setActivity(new Menu());
+    }
+
+    public static OrthographicCamera getCam() {
+        return Engine.camera;
+    }
+
+    public static void setActivity(Activity activity) {
+        if(Engine.activity != null) {
+            Engine.activity.dispose();
+        }
+        Engine.activity = activity;
     }
 
     public static Activity getActivity() {
@@ -41,11 +75,12 @@ public class Engine extends ApplicationAdapter {
         return Gdx.graphics;
     }
 
-    public static Input getInputs() {
-        return Gdx.input;
+    public static Touch getInputs() {
+        return Engine.touch;
     }
 
     private void tick() {
+        touch.tick();
         activity.tick();
     }
 

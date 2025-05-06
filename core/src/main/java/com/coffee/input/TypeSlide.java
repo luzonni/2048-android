@@ -1,8 +1,8 @@
-package com.coffee.game;
+package com.coffee.input;
 
 public enum TypeSlide {
 
-    Up(0, -1), Right(1, 0), Down(0, 1), Left(-1, 0);
+    Idle(0, 0), Up(0, -1), Right(1, 0), Down(0, 1), Left(-1, 0);
 
     private int nx, ny;
 

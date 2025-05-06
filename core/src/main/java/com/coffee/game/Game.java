@@ -12,24 +12,11 @@ public class Game implements Activity {
 
     private final UI ui;
     private final Grid grid;
-    private final OrthographicCamera camera;
     private final List<Integer[]> gridMemory;
 
-    private static int scale;
-
-    public static int SCALE() {
-        return scale;
-    }
-
-    public static int SIZE() {
-        return 16*scale;
-    }
-
     public Game(int width, int height) {
-        scale = Engine.getWidth()/80;
+        Engine.setSCALE(15 - width);
         this.gridMemory = new ArrayList<>();
-        this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, Engine.getWidth(), Engine.getHeight());
         this.ui = new UI();
         this.grid = new Grid(width, height);
     }
@@ -40,10 +27,6 @@ public class Game implements Activity {
             return (Game)activity;
         }
         throw new RuntimeException("Not in game");
-    }
-
-    public static OrthographicCamera getCam() {
-        return getGame().camera;
     }
 
     public static Grid getGrid() {

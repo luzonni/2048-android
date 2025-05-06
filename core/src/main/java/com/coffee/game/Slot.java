@@ -78,22 +78,23 @@ public class Slot {
     }
 
     public void tick() {
-        if(!isEmpty()) {
+        if(isEmpty())
+            return;
+        if(!done()) {
             Rectangle curP = this.content.getBounds();
-            float fluid = 2;
-            float nx = ((bounds.x - curP.x) / fluid);
-            float ny = ((bounds.y - curP.y) / fluid);
+            float nx = 10 * Engine.SCALE() * Math.signum(bounds.x - curP.x);
+            float ny = 10 * Engine.SCALE() * Math.signum(bounds.y - curP.y);
 
-            float x = Math.abs(nx) < 1f ? bounds.x : curP.x + nx;
-            float y = Math.abs(ny) < 1f ? bounds.y : curP.y + ny;
+            float x = (Math.abs(bounds.x - curP.x) < Math.abs(nx)) ? bounds.x : curP.x + nx;
+            float y = (Math.abs(bounds.y - curP.y) < Math.abs(ny)) ? bounds.y : curP.y + ny;
             this.content.setPosition(x, y);
-            if(content.getScale() != 1d && done()) {
-                float curScale = content().getScale();
-                float def = ((1 - content.getScale())/2) * delta*20;
-                if(def <= 0.1)
-                    content.setScale(1);
-                content.setScale(curScale + def);
-            }
+        }
+        if(content.getScale() != 1d && done()) {
+            float curScale = content().getScale();
+            float def = ((1 - content.getScale())/4) * delta*30;
+            if(def <= 0.1)
+                content.setScale(1);
+            content.setScale(curScale + def);
         }
     }
 
@@ -101,10 +102,22 @@ public class Slot {
         float x = bounds.x + Game.getGrid().getBounds().x;
         float y = bounds.y + Game.getGrid().getBounds().y;
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.setProjectionMatrix(Game.getCam().combined);
+        shape.setProjectionMatrix(Engine.getCam().combined);
         shape.setColor(slotColor);
-        shape.rect(x, y, bounds.getWidth(), bounds.getHeight());
+        drawRoundedRect(shape, x, y, bounds.width, bounds.height, bounds.width*0.1f);
         shape.end();
+    }
+
+    void drawRoundedRect(ShapeRenderer shapeRenderer, float x, float y, float width, float height, float radius) {
+        shapeRenderer.rect(x + radius, y + radius, width - 2 * radius, height - 2 * radius);
+        shapeRenderer.rect(x + radius, y, width - 2 * radius, radius); // baixo
+        shapeRenderer.rect(x + radius, y + height - radius, width - 2 * radius, radius); // cima
+        shapeRenderer.rect(x, y + radius, radius, height - 2 * radius); // esquerda
+        shapeRenderer.rect(x + width - radius, y + radius, radius, height - 2 * radius); // direita
+        shapeRenderer.circle(x + radius, y + radius, radius); // inferior esquerdo
+        shapeRenderer.circle(x + width - radius, y + radius, radius); // inferior direito
+        shapeRenderer.circle(x + radius, y + height - radius, radius); // superior esquerdo
+        shapeRenderer.circle(x + width - radius, y + height - radius, radius); // superior direito
     }
 
     public void dispose() {
