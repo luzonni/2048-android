@@ -3,6 +3,7 @@ package com.coffee.game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.coffee.Engine;
 
 public class Slot {
 
@@ -44,10 +45,10 @@ public class Slot {
         }
     }
 
-    public void putNew(int level) {
+    public void putNew(int value) {
         if(isEmpty()) {
             this.content = new Box(this.bounds.width);
-            this.content.setValue((int)Math.pow(2, level));
+            this.content.setValue(value);
             this.content.setPosition(bounds.x, bounds.y);
         }
     }
@@ -97,9 +98,12 @@ public class Slot {
     }
 
     public void render() {
+        float x = bounds.x + Game.getGrid().getBounds().x;
+        float y = bounds.y + Game.getGrid().getBounds().y;
         shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.setProjectionMatrix(Game.getCam().combined);
         shape.setColor(slotColor);
-        shape.rect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+        shape.rect(x, y, bounds.getWidth(), bounds.getHeight());
         shape.end();
     }
 

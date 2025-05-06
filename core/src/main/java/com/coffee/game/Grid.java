@@ -1,5 +1,7 @@
 package com.coffee.game;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.coffee.Engine;
 
@@ -8,7 +10,9 @@ import java.util.List;
 
 public class Grid {
 
-    private Rectangle bounds;
+    private final ShapeRenderer shape;
+    private final Color color;
+    private final Rectangle bounds;
 
     private final int width, height;
     private final int padding;
@@ -20,7 +24,9 @@ public class Grid {
     public Grid(int width, int height) {
         this.width = width;
         this.height = height;
-        this.padding = 10;
+        this.padding = 2*Game.SCALE();
+        this.shape = new ShapeRenderer();
+        this.color = new Color(0xbdada0ff);
         this.bounds = new Rectangle(0, 0, width*(Game.SIZE()+padding)+padding, height*(Game.SIZE()+padding)+padding);
         this.grid = buildGrid();
         spawn();
@@ -34,6 +40,10 @@ public class Grid {
             }
         }
         return slots;
+    }
+
+    public Rectangle getBounds() {
+        return this.bounds;
     }
 
     private void spawn() {
@@ -61,6 +71,23 @@ public class Grid {
     }
 
     private void setOnCenterScreen() {
+        this.getBounds().setPosition(Engine.getWidth()/2f - getBounds().width/2, Engine.getHeight()/2f - getBounds().height/2);
+    }
+
+    public Slot[] getGrid() {
+        return this.grid;
+    }
+
+
+
+    public void setGrid(Integer[] values) {
+        for(int i = 0; i < grid.length; i++) {
+            Slot slot = grid[i];
+            slot.pop();
+            if(values[i] != 0) {
+                slot.putNew(values[i]);
+            }
+        }
     }
 
     public void tick() {
@@ -70,16 +97,16 @@ public class Grid {
                 slot.tick();
         }
         if(allDone()) {
-            if (Engine.getInputs().isTouched() && !touched) {
+            if (Engine.getInputs().justTouched() && !touched) {
                 touched = true;
-                // Captura as coordenadas iniciais do toque
                 startX = Engine.getInputs().getX();
                 startY = Engine.getInputs().getY();
             } else if (!Engine.getInputs().isTouched() && touched) {
                 float deltaX = Engine.getInputs().getX() - startX;
                 float deltaY = Engine.getInputs().getY() - startY;
-
-                // Determina a direção do movimento com base no delta
+                if(Math.abs(deltaX) <= Game.SIZE()/3f && Math.abs(deltaY) <= Game.SIZE()/3f)
+                    return;
+                Game.getGame().stackGrid();
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {
                     if (deltaX > 0) {
                         moved = slide(TypeSlide.Right);
@@ -93,8 +120,7 @@ public class Grid {
                         moved = slide(TypeSlide.Down);
                     }
                 }
-
-                touched = false; // Reseta o toque
+                touched = false;
             }
             if(moved) {
                 moved = false;
@@ -161,6 +187,10 @@ public class Grid {
     }
 
     public void render() {
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.setColor(color);
+        shape.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+        shape.end();
         for(Slot slot : grid) {
             slot.render();
         }
@@ -170,4 +200,11 @@ public class Grid {
         }
     }
 
+    public void dispose() {
+        for(Slot slot : grid) {
+            slot.content().dispose();
+            slot.dispose();
+        }
+        shape.dispose();
+    }
 }

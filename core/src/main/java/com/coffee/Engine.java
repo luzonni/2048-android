@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.coffee.game.Game;
 
 import java.util.Random;
@@ -13,12 +12,8 @@ import java.util.Random;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Engine extends ApplicationAdapter {
 
-    float tickAccumulator = 0f;
-    final float TICK_RATE = 1f / 60f; // 60 Hz
 
-
-    private Game game;
-
+    private static Activity activity;
     public static Random rand;
 
     static {
@@ -27,7 +22,11 @@ public class Engine extends ApplicationAdapter {
 
     @Override
     public void create() {
-        game = new Game(4, 4);
+        activity = new Game(4, 4);
+    }
+
+    public static Activity getActivity() {
+        return Engine.activity;
     }
 
     public static int getWidth() {
@@ -47,19 +46,19 @@ public class Engine extends ApplicationAdapter {
     }
 
     private void tick() {
-        game.tick();
+        activity.tick();
     }
 
     @Override
     public void render() {
             tick();
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(251, 248, 239, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-        game.render();
+        activity.render();
     }
 
     @Override
     public void dispose() {
-        game.dispose();
+        activity.dispose();
     }
 }

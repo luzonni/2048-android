@@ -14,8 +14,8 @@ public class Box {
 
     private final SpriteBatch batch;
     private final ShapeRenderer shape;
-    private GlyphLayout layout;
-    private BitmapFont font;
+    private final GlyphLayout layout;
+    private final BitmapFont font;
 
 
     private int value;
@@ -90,13 +90,17 @@ public class Box {
         int indexColor = (int) Math.sqrt(this.value) - 1;
         if (indexColor >= colors.length)
             indexColor = colors.length - 1;
+
+        float x = bounds.x + Game.getGrid().getBounds().x;
+        float y = bounds.y + Game.getGrid().getBounds().y;
+
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(colors[indexColor]);
         float width = bounds.width*scale;
         float height = bounds.width*scale;
-        float x = bounds.x + (bounds.width - width)/2;
-        float y = bounds.y + (bounds.height - height)/2;
-        shape.rect(x, y, width, height);
+        float xRec = x + (bounds.width - width)/2;
+        float yRec = y + (bounds.height - height)/2;
+        shape.rect(xRec, yRec, width, height);
         shape.end();
 
         String text = String.valueOf(value);
@@ -108,7 +112,8 @@ public class Box {
         else
             font.setColor(Color.WHITE);
         batch.begin();
-        font.draw(batch, text, bounds.getX() + bounds.getWidth()/2 - wF/2, bounds.getY() + bounds.getHeight()/2 + hF/2);
+        font.getData().setScale(scale);
+        font.draw(batch, text, x+ bounds.getWidth()/2 - wF/2, y + bounds.getHeight()/2 + hF/2);
         batch.end();
 
     }
