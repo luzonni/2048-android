@@ -1,5 +1,7 @@
-package com.coffee.shared.shared;
+package com.coffee.shared;
 
+
+import static com.coffee.shared.DrawRoundedRectKt.drawRoundedRect;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -8,9 +10,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.coffee.Engine;
-import com.coffee.game.Game;
 
 public class Button {
     private final SpriteBatch batch;
@@ -54,7 +54,7 @@ public class Button {
     public void render() {
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(this.color);
-        shape.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+        drawRoundedRect(shape, bounds.x, bounds.y, bounds.width, bounds.height, bounds.width*0.1f);
         shape.end();
         float wF = layout.width;
         float hF = layout.height;

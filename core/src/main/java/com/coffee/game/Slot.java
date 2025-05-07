@@ -1,5 +1,7 @@
 package com.coffee.game;
 
+import static com.coffee.shared.DrawRoundedRectKt.drawRoundedRect;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -104,20 +106,8 @@ public class Slot {
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setProjectionMatrix(Engine.getCam().combined);
         shape.setColor(slotColor);
-        drawRoundedRect(shape, x, y, bounds.width, bounds.height, bounds.width*0.1f);
+        drawRoundedRect(shape, x, y, bounds.width, bounds.height, Engine.SIZE()*0.1f);
         shape.end();
-    }
-
-    void drawRoundedRect(ShapeRenderer shapeRenderer, float x, float y, float width, float height, float radius) {
-        shapeRenderer.rect(x + radius, y + radius, width - 2 * radius, height - 2 * radius);
-        shapeRenderer.rect(x + radius, y, width - 2 * radius, radius); // baixo
-        shapeRenderer.rect(x + radius, y + height - radius, width - 2 * radius, radius); // cima
-        shapeRenderer.rect(x, y + radius, radius, height - 2 * radius); // esquerda
-        shapeRenderer.rect(x + width - radius, y + radius, radius, height - 2 * radius); // direita
-        shapeRenderer.circle(x + radius, y + radius, radius); // inferior esquerdo
-        shapeRenderer.circle(x + width - radius, y + radius, radius); // inferior direito
-        shapeRenderer.circle(x + radius, y + height - radius, radius); // superior esquerdo
-        shapeRenderer.circle(x + width - radius, y + height - radius, radius); // superior direito
     }
 
     public void dispose() {

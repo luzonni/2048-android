@@ -10,6 +10,8 @@ import java.util.List;
 
 public class Game implements Activity {
 
+    private int score;
+
     private final UI ui;
     private final Grid grid;
     private final List<Integer[]> gridMemory;
@@ -19,6 +21,14 @@ public class Game implements Activity {
         this.gridMemory = new ArrayList<>();
         this.ui = new UI();
         this.grid = new Grid(width, height);
+    }
+
+    public void plusScore(int value) {
+        this.score += value;
+    }
+
+    public int getScore() {
+        return this.score;
     }
 
     public static Game getGame() {

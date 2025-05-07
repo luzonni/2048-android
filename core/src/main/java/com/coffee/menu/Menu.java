@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.coffee.Activity;
 import com.coffee.Engine;
 import com.coffee.game.Game;
-import com.coffee.shared.shared.Button;
+import com.coffee.shared.Button;
 
 import java.util.HashMap;
 import java.util.Map;

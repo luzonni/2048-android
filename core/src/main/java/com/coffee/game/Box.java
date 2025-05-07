@@ -1,5 +1,7 @@
 package com.coffee.game;
 
+import static com.coffee.shared.DrawRoundedRectKt.drawRoundedRect;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -7,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.coffee.Engine;
 
 
 public class Box {
@@ -123,18 +124,6 @@ public class Box {
         font.draw(batch, text, x + bounds.getWidth()/2 - wF/2, y + bounds.getHeight()/2 + hF/2);
         batch.end();
 
-    }
-
-    void drawRoundedRect(ShapeRenderer shapeRenderer, float x, float y, float width, float height, float radius) {
-        shapeRenderer.rect(x + radius, y + radius, width - 2 * radius, height - 2 * radius);
-        shapeRenderer.rect(x + radius, y, width - 2 * radius, radius); // baixo
-        shapeRenderer.rect(x + radius, y + height - radius, width - 2 * radius, radius); // cima
-        shapeRenderer.rect(x, y + radius, radius, height - 2 * radius); // esquerda
-        shapeRenderer.rect(x + width - radius, y + radius, radius, height - 2 * radius); // direita
-        shapeRenderer.circle(x + radius, y + radius, radius); // inferior esquerdo
-        shapeRenderer.circle(x + width - radius, y + radius, radius); // inferior direito
-        shapeRenderer.circle(x + radius, y + height - radius, radius); // superior esquerdo
-        shapeRenderer.circle(x + width - radius, y + height - radius, radius); // superior direito
     }
 
 

@@ -1,5 +1,7 @@
 package com.coffee.game;
 
+import static com.coffee.shared.DrawRoundedRectKt.drawRoundedRect;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -52,7 +54,8 @@ public class Grid {
                 emptySlots.add(grid[i]);
             }
         }
-        emptySlots.get(Engine.rand.nextInt(emptySlots.size())).putNew();
+        if(!emptySlots.isEmpty())
+            emptySlots.get(Engine.rand.nextInt(emptySlots.size())).putNew();
     }
 
     public Slot getSlot(int x, int y) {
@@ -96,46 +99,49 @@ public class Grid {
         }
         if(allDone()) {
             TypeSlide slide = Engine.getInputs().getSlide();
+            int score = 0;
             if (!slide.equals(TypeSlide.Idle)) {
                 Game.getGame().stackGrid();
-                slided = slide(slide);
+                score = slide(slide);
+                slided = true;
             }
             if(slided && allDone()) {
                 slided = false;
                 spawn();
             }
+            Game.getGame().plusScore(score);
         }
     }
 
-    private boolean slide(TypeSlide slide) {
-        int slides = 0;
+    private int slide(TypeSlide slide) {
+        int score = 0;
         List<Slot> joined = new ArrayList<>();
         if(slide.equals(TypeSlide.Down)) {
             for(int y = height-2; y >= 0; y--) {
                 for(int x = 0; x < width; x++) {
-                    slides += swap(joined, slide, x, y);
+                    score += swap(joined, slide, x, y);
                 }
             }
         }else if(slide.equals(TypeSlide.Up)) {
             for(int y = 1; y < height; y++) {
                 for(int x = 0; x < width; x++) {
-                    slides += swap(joined, slide, x, y);
+                    score += swap(joined, slide, x, y);
                 }
             }
         }else if(slide.equals(TypeSlide.Left)) {
             for(int y = 0; y < height; y++) {
                 for(int x = 1; x < width; x++) {
-                    slides += swap(joined, slide, x, y);
+                    score += swap(joined, slide, x, y);
                 }
             }
         }else if(slide.equals(TypeSlide.Right)) {
             for(int y = 0; y < height; y++) {
                 for(int x = width - 2; x >= 0; x--) {
-                    slides += swap(joined, slide, x, y);
+                    score += swap(joined, slide, x, y);
                 }
             }
         }
-        return slides > 0;
+        return score;
     }
 
     private int swap(List<Slot> joined, TypeSlide dir, int x, int y) {
@@ -152,14 +158,14 @@ public class Grid {
             }else if(nextSlot.compareTo(curSlot) && !joined.contains(nextSlot)) {
                 nextSlot.moveTo(curSlot);
                 joined.add(nextSlot);
-                return 1;
+                return nextSlot.content().getValue();
             }else {
                 break;
             }
         }
         if((nextX-dir.getNx() != x || nextY-dir.getNy() != y) && getSlot(nextX-dir.getNx(), nextY-dir.getNy()).isEmpty()) {
             getSlot(nextX - dir.getNx(), nextY - dir.getNy()).moveTo(curSlot);
-            return 1;
+            return 0;
         }
         return 0;
     }
@@ -167,7 +173,7 @@ public class Grid {
     public void render() {
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(color);
-        shape.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+        drawRoundedRect(shape, bounds.x, bounds.y, bounds.width, bounds.height, (bounds.width/width)*0.1f);
         shape.end();
         for(Slot slot : grid) {
             slot.render();
